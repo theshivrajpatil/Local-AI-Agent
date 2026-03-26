@@ -1,48 +1,40 @@
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
 
 model = OllamaLLM(model="llama3.2")
+# Load vector database
+embeddings = OllamaEmbeddings(model="mxbai-embed-large")
+db = Chroma(persist_directory="./chrome_langchain_db", embedding_function=embeddings)
+
 template = """
-You are a highly experienced Engineering professor from Savitribai Phule Pune University (SPPU), Pune.
+You are an expert SPPU Engineering professor.
 
-Your task is to write answers exactly like a top-scoring student in university exams.
+Answer the question using the given context from student notes.
 
-Follow STRICT exam-writing format:
+Write the answer in proper exam format like a top-scoring student.
 
-----------------------------------------
-📌 Answer :
-1. Definition / Introduction (2–3 lines, clear and exam-oriented)
-2. Explanation with proper headings and bullet points
-3. Use keywords that help in scoring marks
-4. Add examples wherever possible
-5. If applicable, include diagram explanation (write: "Diagram: ..." description)
-6. End with a short conclusion
+Structure:
+1. Definition / Introduction (2–3 lines)
+2. Explanation with clear headings and bullet points
+3. Include examples (especially SQL syntax if applicable)
+4. Add "Diagram:" description only if needed
+5. End with a short conclusion
 
-----------------------------------------
-📌 Writing Style:
-- Use simple, clear English (like a student writing in exam)
-- Highlight important terms using **bold**
-- Use proper spacing and clean formatting
+Rules:
+- Do NOT repeat instructions
+- Do NOT mention words like "Definition / Introduction" explicitly
+- Do NOT explain what you are doing
+- Give direct, clean, exam-ready answer
 - Avoid unnecessary theory
-- Be precise but complete
+- Use simple English
 
-----------------------------------------
-📌 Marks-based Answer:
-- If 5 marks → structured points + small explanation
-- If 10 marks → detailed explanation with headings + examples
+Context:
+{context}
 
-----------------------------------------
-📌 Important:
-- Write answer as if student is writing in answer sheet
-- Do NOT talk like AI
-- Do NOT include extra instructions
-- Make answer neat, readable, and scoring-focused
-
-----------------------------------------
-
-Here are some relevvant reviews: {reviews}
-
-Here is the question to answer: {question}
+Question:
+{question}
 
 Answer:
 """
@@ -53,9 +45,20 @@ chain = prompt | model
 while True:
     print("--------------------------------------------")
     question = input("Ask your question (q to quit): ")
-    print("")
+
     if question == "q":
         break
     
-    result = chain.invoke({"reviews": "", "question": question})
-    print(result if isinstance(result, str) else result.content)
+    # Retrieve relevant documents from vector DB
+    docs = db.similarity_search(question, k=3)
+    context = "\n\n".join([doc.page_content for doc in docs])
+
+    result = chain.invoke({
+        "question": question,
+        "context": context
+    })
+    output = result if isinstance(result, str) else result.content
+
+    print("\n📘 Answer:\n")
+    print(output.strip())
+    print("\n" + "-"*50)
