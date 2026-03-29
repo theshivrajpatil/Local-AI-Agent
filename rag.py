@@ -11,7 +11,7 @@ embeddings = OllamaEmbeddings(model="mxbai-embed-large")
 db_location = "./chrome_langchain_db"
 add_documents = not os.path.exists(db_location)
 
-# --- Support for multiple file types ---
+# Support multiple file types 
 documents = []
 
 def load_file(file_path):
@@ -28,7 +28,6 @@ def load_file(file_path):
 
     return loader.load()
 
-# Example usage (you can replace with dynamic input later)
 folder_path = "./data"
 
 if os.path.exists(folder_path):
@@ -40,7 +39,6 @@ if os.path.exists(folder_path):
         except Exception as e:
             print(f"Skipping {file}: {e}")
 
-# --- Split documents into smaller chunks to avoid context length error ---
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=500,
     chunk_overlap=50
