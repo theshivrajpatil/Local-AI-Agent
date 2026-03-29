@@ -17,6 +17,19 @@ The system uses a Retrieval-Augmented Generation (RAG) pipeline to provide accur
 - Structured, exam-oriented responses
 - Retrieval-Augmented Generation (RAG) architecture
 
+## How It Works
+
+1. User uploads a document via WhatsApp  
+2. The system processes the file and extracts text  
+3. Text is split into smaller chunks  
+4. Each chunk is converted into embeddings  
+5. Embeddings are stored in a vector database (ChromaDB)  
+
+When a user asks a question:
+- Relevant chunks are retrieved from the database  
+- Context is passed to the language model  
+- The model generates a structured answer 
+
 ## System Architecture
 
 The system follows a standard RAG workflow:
