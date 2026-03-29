@@ -1,10 +1,7 @@
-# app.py
-
 from flask import Flask, request
 import requests
 import os
 
-# Import from your existing rag.py
 from rag import db, load_file, embeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -16,7 +13,6 @@ app.config['PREFERRED_URL_SCHEME'] = 'https'
 
 UPLOAD_FILE = "uploaded_file"
 
-# 🔥 Process uploaded file dynamically
 def process_file(file_path):
     docs = load_file(file_path)
 
@@ -28,8 +24,6 @@ def process_file(file_path):
     split_docs = splitter.split_documents(docs)
     db.add_documents(split_docs)
 
-
-# 🔥 Ask question using vector DB
 def ask_question(question):
     docs = db.similarity_search(question, k=5)
     context = "\n\n".join([doc.page_content for doc in docs])
@@ -48,7 +42,7 @@ Question:
 Answer:
 """
 
-    # Using Ollama via embeddings model (LLM needed)
+    
     from langchain_ollama.llms import OllamaLLM
     model = OllamaLLM(model="llama3")
 
@@ -61,7 +55,7 @@ def whatsapp_webhook():
     media_url = request.form.get("MediaUrl0")
     media_type = request.form.get("MediaContentType0")
 
-    # 📄 File upload
+    
     if media_url:
         try:
             ext = ".pdf"
@@ -93,7 +87,7 @@ def whatsapp_webhook():
             resp.message(f"Error processing file: {str(e)}")
             return str(resp)
 
-    # 💬 Question
+
     if message:
         try:
             answer = ask_question(message)
