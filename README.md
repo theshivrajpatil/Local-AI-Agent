@@ -44,8 +44,10 @@ The system follows a standard RAG workflow:
 
 ## Technologies Used
 
-- Python   
+- Python  
+- Flask  
 - LangChain  
 - Ollama (Local LLM)  
 - ChromaDB (Vector Store)  
-- Unstructured (Document parsing) 
+- Twilio API (WhatsApp integration)  
+- Unstructured / document loaders  
