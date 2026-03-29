@@ -4,7 +4,7 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 
 model = OllamaLLM(model="llama3.2")
-# Load vector database
+
 embeddings = OllamaEmbeddings(model="mxbai-embed-large")
 db = Chroma(persist_directory="./chrome_langchain_db", embedding_function=embeddings)
 
@@ -49,7 +49,7 @@ while True:
     if question == "q":
         break
     
-    # Retrieve relevant documents from vector DB
+   
     docs = db.similarity_search(question, k=3)
     context = "\n\n".join([doc.page_content for doc in docs])
 
