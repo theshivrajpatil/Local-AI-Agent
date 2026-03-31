@@ -3,7 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 
-model = OllamaLLM(model="llama3.2")
+model = OllamaLLM(model="mistral")
 
 embeddings = OllamaEmbeddings(model="mxbai-embed-large")
 db = Chroma(persist_directory="./chrome_langchain_db", embedding_function=embeddings)
